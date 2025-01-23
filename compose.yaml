@@ -1,0 +1,27 @@
+services:
+  mock:
+    build:
+      context: ./server
+    ports:
+      - 777:777
+    volumes:
+      - api-volume:/app/api
+    depends_on:
+      - har_to_mocks
+  har_to_mocks:
+    build:
+      context: ./harToMocks
+    # ports:
+    #   - 777:777
+    volumes:
+      - api-volume:/app/api
+      - ./harToMocks/currentHar:/api/currentHar
+
+networks:
+  default:
+    name: nop-local-network
+    external: true
+
+volumes:
+  api-volume:
+

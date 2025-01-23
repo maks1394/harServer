@@ -1,0 +1,13 @@
+services:
+  mock:
+    build:
+      context: .
+    ports:
+      - 777:777
+
+networks:
+  default:
+    name: nop-local-network
+    external: true
+
+
