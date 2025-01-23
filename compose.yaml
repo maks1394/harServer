@@ -15,7 +15,7 @@ services:
     #   - 777:777
     volumes:
       - api-volume:/app/api
-      - ./harToMocks/currentHar:/api/currentHar
+      - ./harToMocks/currentHar:/app/currentHar
 
 networks:
   default:
