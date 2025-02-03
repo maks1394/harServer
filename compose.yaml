@@ -1,5 +1,5 @@
 services:
-  mock:
+  mock_server:
     build:
       context: ./server
     ports:
@@ -7,8 +7,8 @@ services:
     volumes:
       - api-volume:/app/api
     depends_on:
-      - har_to_mocks
-  har_to_mocks:
+      - har_to_mocks_compiler
+  har_to_mocks_compiler:
     build:
       context: ./harToMocks
     # ports:

@@ -15,6 +15,7 @@
     "author": "Ваше Имя",
     "license": "MIT",
     "dependencies": {
-      "express": "^4.18.2"
+      "express": "^4.18.2",
+      "lodash": "^4.17.21"
     }
   }

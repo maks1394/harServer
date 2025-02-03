@@ -1,22 +1,18 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const _ = require('lodash');
+const { getIsDeepEqual } = require('./utils');
 
 const app = express();
 const PORT = 777;
+
+app.use(express.json());
 
 app.use((req, res) => {
   const method = req.method;
   const urlPath = req.path;
   const filePath = path.join(__dirname, urlPath, `${method}.json`);
-
-  // const filePath = path.join(
-  //   __dirname,
-  //   urlPath,
-  //   `${method}_${JSON.stringify(
-  //     req.query.sort((a, b) => a.name.localeCompare(b.name))
-  //   )}.json`
-  // );
 
   fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
@@ -26,7 +22,32 @@ app.use((req, res) => {
 
     try {
       const jsonData = JSON.parse(data);
-      res.json(jsonData);
+      const getResult = () => {
+        const request = jsonData.find(({ queryData, postData }, index) => {
+          const isQueryDataEquals = queryData
+            ? _.isEqual(JSON.parse(queryData), req.query)
+            : !req.query?.length;
+
+          const isPostDataEquals = postData
+            ? getIsDeepEqual(JSON.parse(JSON.parse(postData)?.text), req.body)
+            : method === 'GET';
+
+          return isQueryDataEquals && isPostDataEquals;
+        });
+        if (request) {
+          console.log(
+            `\n data was founded by query and post data ${method} ${urlPath} \n`
+          );
+          return JSON.parse(request.fileData);
+        } else {
+          console.log(
+            `\n data was not founded by query and post data. First data was got ${method} ${urlPath} \n`
+          );
+          return JSON.parse(jsonData?.[0]?.fileData);
+        }
+      };
+
+      res.json(getResult());
     } catch (parseErr) {
       console.error(`Error parsing JSON: ${parseErr}`);
       res.status(500).send('Error parsing JSON');

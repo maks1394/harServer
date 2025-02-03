@@ -18,7 +18,7 @@ export class HarToMocksProcess {
     entries.forEach((entry) => {
       const json = JSON.stringify(entry);
       const div = json.match(/<div class=.{0,2}js-react-on-rails-component.+<\/div>/);
-      const dataProps = div?.[0].match(/data-props.+\"/);
+      const dataProps = div?.[0].match(/data-props.+"/);
       if (json.includes('js-react-on-rails-component')) {
         // console.log(dataProps?.[0]);
       }
@@ -27,18 +27,14 @@ export class HarToMocksProcess {
 
     // Filter by user input in the flow:
     if (url) {
-      console.log('************************* URL', url);
-      // filtred = filtred.filter((e) => e.request.url.includes(url));
+      filtred = filtred.filter((e) => e.request.url.includes(url));
     }
 
     if (resourceType) {
-      console.log('************************* resourceType', resourceType);
-
-      // filtred = filtred.filter((e) => e._resourceType === resourceType);
+      filtred = filtred.filter((e) => e._resourceType === resourceType);
     }
 
     if (methods) {
-      console.log('***************************************** methods', methods);
       filtred = filtred.filter((e) => methods.includes(e.request.method));
     }
 

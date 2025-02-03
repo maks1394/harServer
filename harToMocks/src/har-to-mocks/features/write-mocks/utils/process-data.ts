@@ -3,17 +3,52 @@ import { URL } from 'url';
 
 import type { Entry } from '../../../types';
 
-export const entrysToPathsWithData = (entrys: Entry[], targetPath: string) =>
-  entrys.map((entry) => {
-    const parsedUrl = new URL(entry.request.url);
+export const entrysToPathsWithData = (entrys: Entry[], targetPath: string) => {
+  const resultObject = entrys.reduce<
+    Record<string, { fileData: string; queryData: string | null; postData: string | null; fileName: string }[]>
+  >((acc, el) => {
+    const parsedUrl = new URL(el.request.url);
     const filePath = path.join(targetPath, parsedUrl.pathname);
-    const fileName = `${entry.request.method.toUpperCase()}.json`;
+    const fileName = `${el.request.method.toUpperCase()}.json`;
 
-    // const fileName = `${entry.request.method.toUpperCase()}_${JSON.stringify(entry.request.queryString.sort((a,b)=> a.name.localeCompare(b.name)))}.json`;
-    const fileData = entry.response.content.text;
-    return {
-      filePath,
-      fileName,
+    const resultFileData = el.response.content.text;
+    const resultPostData = el.request.postData ? JSON.stringify(el.request.postData) : null;
+    const resultQueryData = el.request.queryString?.length
+      ? JSON.stringify(
+          el.request.queryString.reduce<Record<string, string>>((acc, el) => {
+            acc[el.name] = el.value;
+            return acc;
+          }, {}),
+        )
+      : null;
+
+    if (!acc[filePath]) {
+      acc[filePath] = [];
+    }
+
+    const isRequestAlreadyExist = acc[filePath]?.find(
+      ({ fileData, queryData, postData }) =>
+        fileData === resultFileData && queryData === resultQueryData && postData === resultPostData,
+    );
+
+    if (!isRequestAlreadyExist) {
+      acc[filePath].push({
+        fileData: resultFileData,
+        queryData: resultQueryData,
+        postData: resultPostData,
+        fileName,
+      });
+    }
+    return acc;
+  }, {});
+
+  return Object.entries(resultObject).map(([filePath, fileDataObject]) => {
+    const fileName = fileDataObject?.[0]?.fileName;
+    const resultFileData = fileDataObject.map(({ fileData, queryData, postData }) => ({
       fileData,
-    };
+      queryData,
+      postData,
+    }));
+    return { filePath, fileName, fileData: JSON.stringify(resultFileData) };
   });
+};

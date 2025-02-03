@@ -3,7 +3,7 @@
 добавить
 
 location /api {
-    proxy_pass http://mock:777;
+    proxy_pass http://mock_server:777;
 }
 
 2. удалить контейнер nginx и запустить заново docker-compose up -d nginx

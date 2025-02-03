@@ -1,6 +1,5 @@
+stop:
+	docker compose down -v
 restart:
-	docker compose down
-	make clear
-	docker compose up -d --force-recreate
-clear:
-	docker volume rm mock_api-volume
+	make stop
+	docker compose up -d

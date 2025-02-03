@@ -54,7 +54,6 @@ class HarToMocks extends Command {
 
     if (args.file && typeof args.file === 'string') {
       const data = (await readJson(args.file)) as Har;
-      // console.log('*************', data);
       process.extract(data, {
         methods: usedFlags.method as Method[],
         resourceType: usedFlags.type,
