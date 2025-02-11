@@ -1,18 +1,16 @@
 services:
-  mock_server:
+  har_server:
     build:
       context: ./server
     ports:
-      - 777:777
+      - 1394:1394
     volumes:
       - api-volume:/app/api
     depends_on:
-      - har_to_mocks_compiler
-  har_to_mocks_compiler:
+      - har_compiler
+  har_compiler:
     build:
       context: ./harToMocks
-    # ports:
-    #   - 777:777
     volumes:
       - api-volume:/app/api
       - ./harToMocks/currentHar:/app/currentHar

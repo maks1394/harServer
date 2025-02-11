@@ -6,6 +6,6 @@ COPY . .
 
 RUN yarn install
 
-# EXPOSE 777
+# EXPOSE 1394
 
 CMD node bin/run "$(ls currentHar/*.har | head -n 1)" .
