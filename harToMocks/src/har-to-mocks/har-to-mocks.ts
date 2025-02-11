@@ -22,11 +22,16 @@ export class HarToMocksProcess {
 
     entries.forEach((entry) => {
       if (entry._resourceType === 'document') {
+        if (typeof entry.response.content.text !== 'string') {
+          return;
+        }
+
         const $ = cheerio.load(entry.response.content.text);
-        this.headerData =
-          $('.js-react-on-rails-component').prop('data-props') ||
-          $('script[class=js-react-on-rails-component]').html() ||
-          '';
+        const headerData =
+          $('.js-react-on-rails-component').prop('data-props') || $('script[class=js-react-on-rails-component]').html();
+        if (headerData) {
+          this.headerData = headerData;
+        }
       }
     });
     let filtred: Entry[] = entries;
@@ -52,10 +57,14 @@ export class HarToMocksProcess {
   }
 
   writeHeaderData(targetPath: string) {
-    const filePath = path.join(targetPath, 'api/headerProps');
-    ensureDirSync(filePath);
-    writeFileSync(path.join(filePath, 'header.json'), this.headerData);
-    this.log(`Header data has been written to ${path.join(filePath, 'header.json')}`);
+    if (this.headerData) {
+      const filePath = path.join(targetPath, 'api/headerProps');
+      ensureDirSync(filePath);
+      writeFileSync(path.join(filePath, 'header.json'), this.headerData);
+      this.log(`HEADER DATA has been written to ${path.join(filePath, 'header.json')}`);
+    } else {
+      this.log('NO HEADER data found.');
+    }
   }
 
   write(targetPath: string, isDryRun = false) {
