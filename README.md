@@ -38,10 +38,9 @@ docker-compose restart nginx
 
 ### 6. Получение Header Props
 
-Для получения Header Props просмотрите логи контейнера har_server и следуйте инструкциям, указанным в логах.
+Для получения Header Props просмотрите логи контейнера har_compiler. В начале логов в случае, если Header data найдена, будет следующая запись
 
-**Важно:** Если в HAR файле отсутствуют запросы к HTML документу, вы получите ошибку:
-Error parsing JSON: SyntaxError: Unexpected end of JSON input
+**HEADER DATA WAS FOUND. YOU CAN write command "make props" in directory of container**
 
 ### 7. Обновление HAR файла
 

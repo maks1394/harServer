@@ -10,5 +10,7 @@ node_modules
 /.DS_Store
 /coverage
 /cases/*
+!/cases/.keep
 /currentHar/*
+!/currentHar/.keep
 /api/

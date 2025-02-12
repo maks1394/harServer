@@ -2,7 +2,7 @@ import * as cheerio from 'cheerio';
 import { ensureDirSync, writeFileSync } from 'fs-extra';
 import path from 'path';
 
-import { resultTable, writeMocks } from './features';
+import { getInfoTextFromJsonData, infoHeaderPropsText, resultTable, writeMocks } from './features';
 import type { Entry, Filter, Har, Logger } from './types';
 
 export class HarToMocksProcess {
@@ -31,6 +31,10 @@ export class HarToMocksProcess {
           $('.js-react-on-rails-component').prop('data-props') || $('script[class=js-react-on-rails-component]').html();
         if (headerData) {
           this.headerData = headerData;
+          const stars = new Array(150).join('*');
+          console.log(stars);
+          console.log('\nHEADER DATA WAS FOUND. YOU CAN write command "make props" in directory of container. And then open /result folder\n');
+          console.log(stars);
         }
       }
     });
@@ -61,6 +65,13 @@ export class HarToMocksProcess {
       const filePath = path.join(targetPath, 'api/headerProps');
       ensureDirSync(filePath);
       writeFileSync(path.join(filePath, 'header.json'), this.headerData);
+      try {
+        const result = getInfoTextFromJsonData(JSON.parse(this.headerData));
+        writeFileSync(path.join(filePath, 'header.js'), result);
+        writeFileSync(path.join(filePath, 'readme.md'), infoHeaderPropsText);
+      } catch (error) {
+        console.log('error', error);
+      }
       this.log(`HEADER DATA has been written to ${path.join(filePath, 'header.json')}`);
     } else {
       this.log('NO HEADER data found.');

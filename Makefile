@@ -1,6 +1,4 @@
 init:
-	mkdir harToMocks/currentHar
-	mkdir harToMocks/cases
 	docker-compose build
 stop:
 	docker compose down -v
@@ -11,4 +9,4 @@ restart:
 	docker compose up -d
 props:
 	rm -rf ./result
-	docker cp harserver-har_server-1:/app/api/headerProps ./result
+	docker cp harserver-har_compiler-1:/app/api/headerProps ./result

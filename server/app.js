@@ -2,7 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
-const { getIsDeepEqual, getInfoTextFromJsonData } = require('./utils');
+const { getIsDeepEqual } = require('./utils');
 
 const app = express();
 const PORT = 1394;
@@ -56,39 +56,5 @@ app.use((req, res) => {
 
 // Запуск сервера
 app.listen(PORT, () => {
-  setTimeout(() => {
-    fs.readFile(
-      path.join(__dirname, 'api/headerProps', `header.json`),
-      'utf8',
-      (err, data) => {
-        if (err) {
-          console.error(`Error reading file from disk: ${err}`);
-          return;
-        }
-
-        try {
-          const jsonData = JSON.parse(data);
-          console.log(
-            `\nВ данном har присутсвует html document. Для локального воспроизведения начальных данных откройте файл в \nportal client/apps/portal/app/common/header/Header.tsx\nВместо деструктуризированных пропсов вставьте (props) и в начале данного компонета вставьте содержимое между звездочками(либо выполните команду make props)\nПосле в компонете нажмите сочетание клавиш alt + z и сделайте форматирование документа\nДобавьте импорт useMemo\nimport React, { FC, useEffect, useMemo } from 'react';`
-          );
-
-          const stars = new Array(150).join('*');
-          console.log(stars);
-          const result = getInfoTextFromJsonData(jsonData);
-          console.log(getInfoTextFromJsonData(jsonData));
-          console.log(stars);
-          fs.writeFile(path.join(__dirname, 'api/headerProps', `headerProps.js`), result, err => {
-            if (err) {
-              console.error(err);
-            } else {
-              // file written successfully
-            }
-          });
-        } catch (parseErr) {
-          console.error(`Error parsing JSON: ${parseErr}`);
-        }
-      }
-    );
-  }, 5000);
   console.log(`Server is running on http://localhost:${PORT}`);
 });
