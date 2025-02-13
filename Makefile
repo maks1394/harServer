@@ -1,5 +1,5 @@
 init:
-	docker-compose build
+	docker compose build
 stop:
 	docker compose down -v
 start:
