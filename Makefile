@@ -10,3 +10,7 @@ restart:
 props:
 	rm -rf ./result
 	docker cp harserver-har_compiler-1:/app/api/headerProps ./result
+rebuild:
+	make stop
+	docker rmi -f harserver-har_compiler harserver-har_server
+	docker-compose build

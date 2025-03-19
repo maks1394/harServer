@@ -21,18 +21,18 @@ app.use((req, res) => {
 
     try {
       const jsonData = JSON.parse(data);
+      const request = jsonData.find(({ queryData, postData }) => {
+        const isQueryDataEquals = queryData
+          ? _.isEqual(JSON.parse(queryData), req.query)
+          : !req.query?.length;
+
+        const isPostDataEquals = postData
+          ? getIsDeepEqual(JSON.parse(JSON.parse(postData)?.text), req.body)
+          : method === 'GET';
+
+        return isQueryDataEquals && isPostDataEquals;
+      });
       const getResult = () => {
-        const request = jsonData.find(({ queryData, postData }, index) => {
-          const isQueryDataEquals = queryData
-            ? _.isEqual(JSON.parse(queryData), req.query)
-            : !req.query?.length;
-
-          const isPostDataEquals = postData
-            ? getIsDeepEqual(JSON.parse(JSON.parse(postData)?.text), req.body)
-            : method === 'GET';
-
-          return isQueryDataEquals && isPostDataEquals;
-        });
         if (request) {
           console.log(
             `\n data was founded by query and post data ${method} ${urlPath} \n`
@@ -46,7 +46,7 @@ app.use((req, res) => {
         }
       };
 
-      res.json(getResult());
+      res.status(request?.status || 200).send(getResult());
     } catch (parseErr) {
       console.error(`Error parsing JSON: ${parseErr}`);
       res.status(500).send('Error parsing JSON');
